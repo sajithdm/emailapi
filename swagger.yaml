@@ -1,0 +1,229 @@
+openapi: 3.0.3
+info:
+  version: "1.0.0"
+  title: "Email API - Air New Zealand"
+  description: "Simple REST API to send and retrieve emails"
+tags:
+  - name: "Email"
+    description: "Send and retrieve email message(s)"
+
+paths:
+  /v1/emails:
+    get:
+      tags:
+        - Email
+      description: "Retrieve list of emails"
+      operationId: getEmailList
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: "SUCCESS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailList'
+                '200':
+        '400':
+          description: "BAD REQUEST"
+        '404':
+          description: "NOT FOUND"
+        '500':
+          description: "INTERNAL SERVER ERROR"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                description: "Enable CORS header"
+
+    post:
+      tags:
+        - Email
+      description: "Create an email in the server"
+      operationId: createEmail
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+      responses:
+        '201':
+          description: "CREATED"
+        '400':
+          description: "BAD REQUEST"
+        '500':
+          description: "INTERNAL SERVER ERROR"
+          headers:
+            location-url:
+              schema:
+                type: string
+                description: "url for created resource"
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                description: "Enable CORS header"
+
+  /v1/emails/{id}:
+    get:
+      tags:
+        - Email
+      description: "Returns a email by id"
+      operationId: getEmailById
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/EmailId'
+      responses:
+        '200':
+          description: "SUCCESS"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                description: "Enable CORS header"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+
+    put:
+      tags:
+        - Email
+      description: "Update an email"
+      operationId: updateEmail
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/EmailId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+      responses:
+        '200':
+          description: "SUCCESS"
+        '204':
+          description: "NO CONTENT"
+        '400':
+          description: "BAD REQUEST"
+        '500':
+          description: "INTERNAL SERVER ERROR"
+          headers:
+            location-url:
+              schema:
+                type: string
+                description: "url for created resource"
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                description: "Enable CORS header"
+
+    patch:
+      tags:
+        - Email
+      description: "Send email and update status"
+      operationId: sendEmail
+      parameters:
+        - $ref: '#/components/parameters/AccessToken'
+        - $ref: '#/components/parameters/EmailId'
+      responses:
+        '200':
+          description: "OK"
+        '204':
+          description: "NO CONTENT"
+        '400':
+          description: "BAD REQUEST"
+        '500':
+          description: "INTERNAL SERVER ERROR"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                description: "Enable CORS header"
+
+components:
+  parameters:
+    AccessToken:
+      name: token
+      required: true
+      description: Bearer token for authentication
+      in: header
+      schema:
+        type: string
+    EmailId:
+      name: id
+      required: true
+      in: path
+      schema:
+        type: integer
+        format: int64
+    PageNumber:
+      name: pageNumber
+      required: false
+      description: Specific page number
+      in: query
+      schema:
+        type: integer
+    PageSize:
+      name: pageSize
+      required: false
+      description: Specific page size
+      in: query
+      schema:
+        type: integer
+    Status:
+      name: status
+      required: true
+      description: Email list status
+      in: query
+      schema:
+        type: string
+  schemas:
+    EmailList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Email'
+    Email:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailAddress'
+        subject:
+          type: string
+          description: Subject of the email
+        body:
+          type: string
+          description: Body of the email
+        status:
+          $ref: '#/components/schemas/EmailStatus'
+        attachments:
+          type: array
+          items:
+            type: object
+    EmailAddress:
+      type: string
+      description: Email address
+    EmailStatus:
+      type: string
+      description: Status of the email
+      enum:
+        - INBOX
+        - DRAFT
+        - SENT
