@@ -93,7 +93,7 @@ paths:
     put:
       tags:
         - Email
-      description: "Send an email"
+      description: "Update an email"
       operationId: updateEmail
       parameters:
         - $ref: '#/components/parameters/AccessToken'
@@ -125,16 +125,11 @@ paths:
     patch:
       tags:
         - Email
-      description: "Update email partially"
-      operationId: patchEmail
+      description: "Send email and update status"
+      operationId: sendEmail
       parameters:
         - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/EmailId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
       responses:
         '200':
           description: "OK"
@@ -149,7 +144,6 @@ paths:
               schema:
                 type: string
                 description: "Enable CORS header"
-
 
 components:
   parameters:
