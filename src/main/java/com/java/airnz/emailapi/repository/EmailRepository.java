@@ -5,6 +5,9 @@ import com.java.airnz._project.artifactId_.model.Email;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Email repository interface of the Email API
+ */
 public interface EmailRepository {
 
     public Email createDraft(Email email);

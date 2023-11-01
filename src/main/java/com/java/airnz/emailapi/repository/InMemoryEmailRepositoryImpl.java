@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * In memory repository implementation of the Email API
+ */
 @Repository
 public class InMemoryEmailRepositoryImpl implements EmailRepository {
 
