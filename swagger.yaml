@@ -1,51 +1,45 @@
 openapi: 3.0.3
 info:
   version: "1.0.0"
-  title: "Email API - Air New Zealand"
+  title: "Email API"
   description: "Simple REST API to send and retrieve emails"
 tags:
   - name: "Email"
     description: "Send and retrieve email message(s)"
 
 paths:
-  /v1/emails:
+  /api/v1/emails:
     get:
       tags:
         - Email
       description: "Retrieve list of emails"
       operationId: getEmailList
       parameters:
-        - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/PageNumber'
         - $ref: '#/components/parameters/PageSize'
         - $ref: '#/components/parameters/Status'
       responses:
         '200':
-          description: "SUCCESS"
+          description: '#/components/responses/Success'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmailList'
-                '200':
-        '400':
-          description: "BAD REQUEST"
-        '404':
-          description: "NOT FOUND"
-        '500':
-          description: "INTERNAL SERVER ERROR"
           headers:
             Access-Control-Allow-Origin:
               schema:
                 type: string
-                description: "Enable CORS header"
+                description: "Enable CORS response header"
+        '401':
+          description: '#/components/responses/UnauthorizedError'
+        '404':
+          description: '#/components/responses/NotFoundError'
 
     post:
       tags:
         - Email
       description: "Create an email in the server"
       operationId: createEmail
-      parameters:
-        - $ref: '#/components/parameters/AccessToken'
       requestBody:
         content:
           application/json:
@@ -53,11 +47,7 @@ paths:
               $ref: '#/components/schemas/Email'
       responses:
         '201':
-          description: "CREATED"
-        '400':
-          description: "BAD REQUEST"
-        '500':
-          description: "INTERNAL SERVER ERROR"
+          description: '#/components/responses/Created'
           headers:
             location-url:
               schema:
@@ -67,28 +57,35 @@ paths:
               schema:
                 type: string
                 description: "Enable CORS header"
+        '400':
+          description: '#/components/responses/BadRequestError'
+        '401':
+          description: '#/components/responses/UnauthorizedError'
 
-  /v1/emails/{id}:
+  /api/v1/emails/{id}:
     get:
       tags:
         - Email
       description: "Returns a email by id"
       operationId: getEmailById
       parameters:
-        - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/EmailId'
       responses:
         '200':
-          description: "SUCCESS"
+          description: '#/components/responses/Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
           headers:
             Access-Control-Allow-Origin:
               schema:
                 type: string
                 description: "Enable CORS header"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Email'
+        '401':
+          description: '#/components/responses/UnauthorizedError'
+        '404':
+          description: '#/components/responses/NotFoundError'
 
     put:
       tags:
@@ -96,7 +93,6 @@ paths:
       description: "Update an email"
       operationId: updateEmail
       parameters:
-        - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/EmailId'
       requestBody:
         content:
@@ -105,13 +101,7 @@ paths:
               $ref: '#/components/schemas/Email'
       responses:
         '200':
-          description: "SUCCESS"
-        '204':
-          description: "NO CONTENT"
-        '400':
-          description: "BAD REQUEST"
-        '500':
-          description: "INTERNAL SERVER ERROR"
+          description: '#/components/responses/Success'
           headers:
             location-url:
               schema:
@@ -121,6 +111,10 @@ paths:
               schema:
                 type: string
                 description: "Enable CORS header"
+        '400':
+          description: '#/components/responses/BadRequestError'
+        '401':
+          description: '#/components/responses/UnauthorizedError'
 
     patch:
       tags:
@@ -128,24 +122,26 @@ paths:
       description: "Send email and update status"
       operationId: sendEmail
       parameters:
-        - $ref: '#/components/parameters/AccessToken'
         - $ref: '#/components/parameters/EmailId'
       responses:
         '200':
-          description: "OK"
-        '204':
-          description: "NO CONTENT"
-        '400':
-          description: "BAD REQUEST"
-        '500':
-          description: "INTERNAL SERVER ERROR"
+          description: '#/components/responses/Success'
           headers:
             Access-Control-Allow-Origin:
               schema:
                 type: string
                 description: "Enable CORS header"
+        '400':
+          description: '#/components/responses/BadRequestError'
+        '401':
+          description: '#/components/responses/UnauthorizedError'
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
     AccessToken:
       name: token
@@ -224,6 +220,22 @@ components:
       type: string
       description: Status of the email
       enum:
-        - INBOX
         - DRAFT
         - SENT
+        - RECEIVED
+        - READ
+
+  responses:
+    Success:
+      description: Successful Operation.
+    Created:
+      description: Resource created.
+    UnauthorizedError:
+      description: Access token is missing or invalid.
+    BadRequestError:
+      description: Invalid Request parameters.
+    NotFoundError:
+      description: Resource Not Found.
+
+#security:
+#  - bearerAuth: []
