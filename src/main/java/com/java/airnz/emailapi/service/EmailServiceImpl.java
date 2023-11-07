@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public Optional<List<Email>> getEmailList(int pageNum, int pageSize, String status) throws EmailAPIException {
+    public Optional<List<Email>> getEmailList(Integer pageNum, Integer pageSize, String status) throws EmailAPIException {
         if (pageNum < 1 || pageSize < 1) {
             throw new EmailAPIException(400, "Invalid page details.");
         }

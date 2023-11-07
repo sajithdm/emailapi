@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Custom exception as a placeholder for HTTP 400 Bad Request.
+ * Custom exception as a placeholder for Runtime exceptions.
  */
 @Setter
 @Getter

@@ -14,7 +14,7 @@ public interface EmailService {
 
     public Optional<Email> getEmail(Long id);
 
-    public Optional<List<Email>> getEmailList(int pageNum, int pageSize, String status);
+    public Optional<List<Email>> getEmailList(Integer pageNum, Integer pageSize, String status);
 
     public void updateEmail(Long id, Email email);
 
